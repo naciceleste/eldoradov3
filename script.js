@@ -9,30 +9,6 @@
   const links = $("#nav-links");
   const form = $("#contact-form");
   const formError = $("#form-error");
-  const hero = $("#inicio");
-  const root = document.documentElement;
-  const body = document.body;
-  const theme = document.querySelector('meta[name="theme-color"]');
-
-  const DAY_TOP = "#FDF6E9";
-  const DAY_BOT = "#FDE3C4";
-  const SUNSET_TOP = "#F7A23C";
-  const SUNSET_BOT = "#F48C8C";
-  const NIGHT_TOP = "#0a0f2c";
-  const NIGHT_BOT = "#26194a";
-  const SUN_DAY = "#F0A000";
-  const SUN_SET = "#F69B21";
-  const MOON = "#EAD9B8";
-
-  const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
-  const lerp = (a, b, t) => a + (b - a) * t;
-  const hexTo = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
-  const toHex = (n) => Math.round(n).toString(16).padStart(2, "0");
-  const mix = (a, b, t) => {
-    const A = hexTo(a), B = hexTo(b);
-    return "#" + A.map((v, i) => toHex(v + (B[i] - v) * t)).join("");
-  };
-  const ease = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 
   /* ---- menú ---- */
   const closeMenu = () => {
@@ -52,89 +28,6 @@
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") closeMenu();
   });
-
-  /* ---- cielo según secciones ---- */
-  const marks = () => {
-    const y = (id) => {
-      const el = document.getElementById(id);
-      return el ? el.getBoundingClientRect().top + window.scrollY : 0;
-    };
-    const vh = window.innerHeight;
-    return {
-      vh,
-      heroTop: y("inicio"),
-      heroEnd: y("inicio") + (hero?.offsetHeight || vh) - vh,
-      rubros: y("que-hacemos"),
-      pasos: y("como-funciona"),
-      logos: y("plataformas"),
-      faq: y("preguntas"),
-      contact: y("contacto"),
-    };
-  };
-  let m = marks();
-  window.addEventListener("resize", () => { m = marks(); onScroll(); }, { passive: true });
-
-  /* progreso de noche: 0 día, ~0.45 atardecer, 1 noche */
-  const nightOf = (s) => {
-    const sunsetStart = m.rubros + m.vh * 0.55;
-    if (s < sunsetStart) return 0;
-    if (s < m.pasos) return ease(clamp((s - sunsetStart) / Math.max(1, m.pasos - sunsetStart))) * 0.28;
-    if (s < m.logos) return 0.28 + ease(clamp((s - m.pasos) / Math.max(1, m.logos - m.pasos))) * 0.22;
-    if (s < m.faq) return 0.5;
-    if (s < m.contact - m.vh * 0.12) {
-      return 0.5 + ease(clamp((s - m.faq) / Math.max(1, m.contact - m.faq - m.vh * 0.12))) * 0.5;
-    }
-    return 1;
-  };
-
-  const skyFor = (night) => {
-    if (night <= 0.45) {
-      const t = night / 0.45;
-      return {
-        top: mix(DAY_TOP, SUNSET_TOP, t),
-        bot: mix(DAY_BOT, SUNSET_BOT, t),
-        sun: mix(SUN_DAY, SUN_SET, t),
-        x: lerp(74, 62, t),
-        y: lerp(12, 38, t),
-      };
-    }
-    const t = (night - 0.45) / 0.55;
-    return {
-      top: mix(SUNSET_TOP, NIGHT_TOP, t),
-      bot: mix(SUNSET_BOT, NIGHT_BOT, t),
-      sun: mix(SUN_SET, MOON, t),
-      x: lerp(62, 78, t),
-      y: lerp(38, 14, t),
-    };
-  };
-
-  const onScroll = () => {
-    const s = window.scrollY;
-
-    const night = reduce ? (s >= m.contact - m.vh * 0.3 ? 1 : s >= m.pasos ? 0.5 : s >= m.rubros + m.vh * 0.55 ? 0.28 : 0) : nightOf(s);
-    const sky = skyFor(night);
-    root.style.setProperty("--sky-top", sky.top);
-    root.style.setProperty("--sky-bot", sky.bot);
-    root.style.setProperty("--sun", sky.sun);
-    root.style.setProperty("--sun-x", sky.x + "%");
-    root.style.setProperty("--sun-y", sky.y + "%");
-    root.style.setProperty("--night", night.toFixed(3));
-
-    nav.classList.toggle("is-sunset", night > 0.15 && night < 0.72);
-    nav.classList.toggle("is-night", night >= 0.72);
-    body.classList.toggle("is-night", night >= 0.72);
-    if (theme) theme.setAttribute("content", sky.top);
-  };
-
-  let ticking = false;
-  window.addEventListener("scroll", () => {
-    if (ticking) return;
-    ticking = true;
-    requestAnimationFrame(() => {
-      onScroll();
-      ticking = false;
-    });
-  }, { passive: true });
 
   /* ---- revelar al entrar ---- */
   const reveals = $$(".reveal");
@@ -200,5 +93,4 @@
   });
 
   /* year-less footer already static */
-  onScroll();
 })();
