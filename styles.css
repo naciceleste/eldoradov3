@@ -80,6 +80,9 @@ a { color: inherit; }
     linear-gradient(180deg, var(--sky-top) 0%, var(--sky-bot) 72%);
   transition: background 80ms linear;
 }
+body.is-night .sky-grad {
+  background: linear-gradient(180deg, var(--sky-top) 0%, var(--sky-bot) 72%);
+}
 .sun {
   position: absolute;
   width: 18vw;
@@ -97,24 +100,66 @@ a { color: inherit; }
   transform: translate(-50%, -50%);
   box-shadow: 0 0 80px 20px color-mix(in srgb, var(--sun) 45%, transparent);
 }
+/* Estrellas y estrella fugaz de la Biblioteca (sin luna). Solo de noche. */
+body.is-night .sun { opacity: 0; visibility: hidden; }
+.stars, .shooting { display: none; }
+body.is-night .stars, body.is-night .shooting { display: block; }
 .stars {
   position: absolute;
-  inset: 0;
-  opacity: calc(var(--night) * 0.95);
-  background-image:
-    radial-gradient(1.5px 1.5px at 12% 18%, var(--luna) 50%, transparent 51%),
-    radial-gradient(1.2px 1.2px at 28% 32%, var(--luna) 50%, transparent 51%),
-    radial-gradient(1.6px 1.6px at 46% 14%, #fff 50%, transparent 51%),
-    radial-gradient(1px 1px at 63% 28%, var(--luna) 50%, transparent 51%),
-    radial-gradient(1.4px 1.4px at 81% 16%, #fff 50%, transparent 51%),
-    radial-gradient(1px 1px at 88% 38%, var(--luna) 50%, transparent 51%),
-    radial-gradient(1.5px 1.5px at 18% 58%, var(--luna) 50%, transparent 51%),
-    radial-gradient(1px 1px at 35% 48%, #fff 50%, transparent 51%),
-    radial-gradient(1.3px 1.3px at 72% 62%, var(--luna) 50%, transparent 51%),
-    radial-gradient(1.1px 1.1px at 91% 72%, var(--luna) 50%, transparent 51%),
-    radial-gradient(1px 1px at 8% 80%, #fff 50%, transparent 51%),
-    radial-gradient(1.4px 1.4px at 55% 8%, var(--luna) 50%, transparent 51%);
+  inset: -10px;
+  background-repeat: repeat;
+  animation: twinkle 4.5s ease-in-out infinite alternate;
 }
+.stars-1 {
+  background-size: 340px 300px;
+  background-image:
+    radial-gradient(1.4px 1.4px at 20px 30px, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 120px 80px, #dfe8ff 50%, transparent 51%),
+    radial-gradient(1.6px 1.6px at 260px 40px, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 300px 190px, #cfdcff 50%, transparent 51%),
+    radial-gradient(1.2px 1.2px at 70px 220px, #fff 50%, transparent 51%),
+    radial-gradient(1px 1px at 190px 260px, #e8e0ff 50%, transparent 51%),
+    radial-gradient(1.3px 1.3px at 160px 150px, #fff 50%, transparent 51%);
+}
+.stars-2 {
+  background-size: 520px 460px;
+  animation-duration: 7s;
+  animation-delay: -3s;
+  background-image:
+    radial-gradient(2px 2px at 60px 90px, #fff 45%, rgba(180, 200, 255, .25) 60%, transparent 70%),
+    radial-gradient(2.4px 2.4px at 400px 60px, #ffe9f4 45%, rgba(255, 180, 220, .25) 60%, transparent 70%),
+    radial-gradient(1.8px 1.8px at 300px 330px, #fff 45%, rgba(180, 200, 255, .25) 60%, transparent 70%),
+    radial-gradient(2.2px 2.2px at 470px 400px, #e3f1ff 45%, rgba(160, 200, 255, .25) 60%, transparent 70%),
+    radial-gradient(1.6px 1.6px at 150px 380px, #fff 45%, transparent 70%);
+}
+@keyframes twinkle { from { opacity: .4; } to { opacity: 1; } }
+.shooting {
+  position: absolute;
+  top: 14vh;
+  left: -200px;
+  width: 160px;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, .9));
+  transform: rotate(18deg);
+  animation: shoot 14s ease-in 3s infinite;
+  opacity: 0;
+}
+@keyframes shoot {
+  0% { opacity: 0; transform: translate(0, 0) rotate(18deg); }
+  2% { opacity: 1; }
+  9% { opacity: 0; transform: translate(70vw, 23vw) rotate(18deg); }
+  100% { opacity: 0; transform: translate(70vw, 23vw) rotate(18deg); }
+}
+.cielo-canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  pointer-events: none;
+  opacity: 0;
+}
+body.is-night .cielo-canvas { opacity: 1; }
+.cielo-on body.is-night .stars { display: none !important; }
 
 /* -------- Pastilla -------- */
 .nav {
@@ -293,100 +338,93 @@ body.is-night .section--night h2,
 body.is-night .section--night .lead { color: var(--crema); }
 body.is-night .section--dusk h2 { color: var(--crema); }
 
-/* -------- Hero -------- */
+/* -------- Hero (una sola pantalla, sin scroll-jacking) -------- */
 .hero {
   position: relative;
-  height: 480vh;
-}
-.hero-sticky {
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  height: 100svh;
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  align-items: flex-end;
   overflow: hidden;
 }
-.hero-hint, .story {
+.hero-bg {
   position: absolute;
-  left: 50%;
-  width: min(90vw, 760px);
-  margin: 0;
-  text-align: center;
-  transform: translate(-50%, 0);
-  opacity: 0;
-  pointer-events: none;
+  inset: 0;
+  z-index: 0;
 }
-.hero-hint {
-  bottom: calc(18px + env(safe-area-inset-bottom, 0px));
-  z-index: 3;
-  font-size: 1rem;
-  line-height: 1.4;
-  color: #fff;
-  text-shadow: 0 1px 10px rgba(43, 34, 64, .55);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-}
-.hint-line {
-  width: 1px;
-  height: 36px;
-  background: #fff;
-  opacity: .7;
-  animation: hint-pulse 2s var(--ease) infinite;
-}
-@keyframes hint-pulse {
-  0%, 100% { transform: scaleY(.6); opacity: .3; }
-  50% { transform: scaleY(1); opacity: .7; }
-}
-.story {
-  left: 50%;
-  width: min(86vw, 760px);
-  bottom: 48vh;
-  z-index: 2;
-  font-family: var(--f-display);
-  font-weight: 700;
-  font-size: clamp(2rem, 5.4vw, 4rem);
-  line-height: 1.05;
-  letter-spacing: -0.02em;
-  color: var(--navy);
-  text-shadow: 0 2px 24px color-mix(in srgb, var(--dia-sup) 90%, transparent);
-}
-.story[data-hero="s1"] { opacity: 1; }
-.story::before {
-  content: "";
-  position: absolute;
-  inset: -18% -8%;
-  z-index: -1;
-  border-radius: 50%;
-  background: radial-gradient(closest-side, color-mix(in srgb, var(--dia-sup) 92%, transparent), transparent 72%);
-}
-
-/* -------- Portada: fachada panorámica -------- */
-.hero-store {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 1;
-  height: min(46vh, 480px);
-  margin: 0;
-  pointer-events: none;
-}
-.hero-store picture,
-.hero-store img {
+.hero-bg picture, .hero-bg img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 48%;
+  object-position: center 52%;
 }
-.hero-store::after {
+.hero-bg::after {
   content: "";
   position: absolute;
-  inset: auto 0 0 0;
-  height: 36%;
-  background: linear-gradient(to top, rgba(43, 34, 64, .62), rgba(43, 34, 64, .18) 45%, transparent);
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(43, 34, 64, .78) 0%, rgba(43, 34, 64, .48) 46%, rgba(43, 34, 64, .18) 78%),
+    linear-gradient(180deg, rgba(43, 34, 64, .28) 0%, transparent 28%, rgba(43, 34, 64, .55) 100%);
   pointer-events: none;
-  z-index: 1;
+}
+.hero-copy {
+  position: relative;
+  z-index: 2;
+  width: min(100%, 1120px);
+  margin: 0 auto;
+  padding: 0 clamp(24px, 6vw, 80px) clamp(48px, 8vh, 88px);
+  max-width: 720px;
+  margin-left: max(24px, calc((100vw - 1120px) / 2 + 24px));
+  margin-right: auto;
+  color: #fff;
+}
+.hero-copy h1 {
+  margin: 0;
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: clamp(2.15rem, 5.2vw, 4.15rem);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  color: #fff;
+  text-shadow: 0 2px 24px rgba(43, 34, 64, .35);
+}
+.hero-copy .accent {
+  color: var(--naranja);
+  font-style: normal;
+}
+.hero-lead {
+  margin: 18px 0 0;
+  max-width: 42ch;
+  font-size: clamp(1.05rem, 1.8vw, 1.22rem);
+  line-height: 1.5;
+  color: color-mix(in srgb, #fff 88%, var(--crema));
+  text-shadow: 0 1px 12px rgba(43, 34, 64, .4);
+}
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 28px;
+}
+.hero-actions .btn-wa { padding: 13px 22px; font-size: 16px; }
+.btn-hero-alt {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 13px 22px;
+  border-radius: 999px;
+  border: 1.5px solid #fff;
+  color: #fff;
+  background: transparent;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 16px;
+  letter-spacing: .01em;
+  transition: background .15s ease, transform .15s var(--ease);
+}
+.btn-hero-alt:hover {
+  background: color-mix(in srgb, #fff 14%, transparent);
+  transform: translateY(-1px);
 }
 
 /* -------- Mascota flotante (antes de Contacto) -------- */
@@ -490,18 +528,25 @@ body.is-night .section--dusk h2 { color: var(--crema); }
 .step:nth-child(3) .step-num { color: color-mix(in srgb, var(--salmon) 80%, var(--navy)); }
 .step:nth-child(4) .step-num { color: var(--navy-2); }
 
-/* -------- Logos (estilo v2: pasarela + gris, color al hover/foco/tap) -------- */
-.section--logos { padding-bottom: 72px; }
+/* -------- Logos (fondo blanco, colores oficiales) -------- */
+.section--logos {
+  padding-bottom: 72px;
+  background: #fff;
+}
+.section--logos .section-head h2,
+.section--logos .lead { color: var(--navy); }
+.section--logos .eyebrow {
+  background: color-mix(in srgb, var(--crema) 88%, #fff);
+  color: var(--navy);
+}
 .logo-band {
   max-width: 1120px;
   margin: 8px auto 0;
   padding: 8px 24px;
   border-radius: 28px;
   overflow: hidden;
-  background: color-mix(in srgb, var(--crema) 92%, #fff);
-  box-shadow:
-    inset 0 0 0 1px color-mix(in srgb, var(--navy) 7%, transparent),
-    0 8px 24px color-mix(in srgb, var(--navy) 10%, transparent);
+  background: #fff;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--navy) 6%, transparent);
 }
 .marquee {
   overflow: hidden;
@@ -531,7 +576,6 @@ body.is-night .section--dusk h2 { color: var(--crema); }
   justify-content: center;
   height: 72px;
   outline: none;
-  cursor: pointer;
 }
 .plataforma img {
   width: auto;
@@ -539,9 +583,9 @@ body.is-night .section--dusk h2 { color: var(--crema); }
   max-height: 44px;
   max-width: 148px;
   object-fit: contain;
-  filter: grayscale(1) contrast(1.12) brightness(.9);
-  transition: filter .28s var(--ease);
+  filter: none;
 }
+
 .plataforma--bn img { max-height: 42px; max-width: 200px; }
 .plataforma--tucan img { max-height: 68px; max-width: 72px; }
 .plataforma--hey img { max-height: 62px; max-width: 80px; }
@@ -552,14 +596,59 @@ body.is-night .section--dusk h2 { color: var(--crema); }
 .plataforma--liberty img { max-height: 32px; max-width: 176px; }
 .plataforma--claro img { max-height: 44px; max-width: 140px; }
 .plataforma--jps img { max-height: 38px; max-width: 190px; }
-.plataforma:hover img,
-.plataforma:focus-visible img,
-.plataforma.is-color img {
-  filter: none;
-}
 @keyframes logos {
   from { transform: translateX(0); }
   to { transform: translateX(-50%); }
+}
+
+
+/* -------- Barra CTA (SINPE / WhatsApp) -------- */
+.cta-wrap {
+  position: relative;
+  z-index: 1;
+  padding: 8px clamp(16px, 5vw, 64px) 72px;
+  scroll-margin-top: 96px;
+}
+.cta-bar {
+  max-width: 1120px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px 32px;
+  padding: 20px 20px 20px 36px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--navy) 94%, #000);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--crema) 16%, transparent),
+    0 16px 40px color-mix(in srgb, var(--navy) 22%, transparent);
+  color: var(--crema);
+}
+.cta-text {
+  margin: 0;
+  font-size: clamp(1.02rem, 1.8vw, 1.2rem);
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--crema);
+}
+.btn-cta {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 24px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--naranja), var(--naranja-sol));
+  color: #3a2300;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 1rem;
+  box-shadow: 0 8px 20px rgba(246, 155, 33, .32);
+  transition: transform .15s var(--ease), box-shadow .15s var(--ease);
+  white-space: nowrap;
+}
+.btn-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 26px rgba(246, 155, 33, .42);
 }
 
 /* -------- FAQ -------- */
@@ -846,13 +935,6 @@ body.is-night .section--night { color: var(--crema); }
 }
 .nav.is-night :focus-visible { outline-color: var(--luna); }
 
-@media (max-width: 1180px) and (min-width: 761px) {
-  .story {
-    left: 50%;
-    width: min(80vw, 640px);
-    bottom: 48vh;
-  }
-}
 
 @media (max-width: 900px) {
   .cards { grid-template-columns: 1fr; }
@@ -894,14 +976,23 @@ body.is-night .section--night { color: var(--crema); }
     pointer-events: auto;
   }
   .nav-burger { display: grid; color: inherit; }
-  .hero { height: 400vh; }
-  .story {
-    left: 50%;
-    width: min(90vw, 760px);
-    font-size: 2.1rem;
-    bottom: 48vh;
+  .hero-copy {
+    max-width: none;
+    margin-left: 0;
+    margin-right: 0;
+    padding: 0 20px calc(28px + env(safe-area-inset-bottom, 0px));
   }
-  .hero-store { height: min(34vh, 280px); }
+  .hero-copy h1 { font-size: 2.15rem; }
+  .hero-actions { flex-direction: column; align-items: stretch; }
+  .hero-actions .btn-wa, .btn-hero-alt { width: 100%; }
+  .cta-bar {
+    flex-direction: column;
+    align-items: stretch;
+    text-align: center;
+    border-radius: 28px;
+    padding: 24px 20px;
+  }
+  .btn-cta { width: 100%; }
   .section--night { padding-top: 28px; padding-bottom: 56px; }
   .mascot-float img { width: min(58vw, 220px); }
   .visit-grid { grid-template-columns: 1fr; min-height: 0; }
@@ -930,16 +1021,16 @@ body.is-night .section--night { color: var(--crema); }
   .plataforma--liberty img { max-height: 28px; max-width: 156px; }
   .plataforma--claro img { max-height: 38px; max-width: 124px; }
   .plataforma--jps img { max-height: 34px; max-width: 168px; }
-  .hero-hint { bottom: calc(16px + env(safe-area-inset-bottom, 0px)); padding-inline: 16px; }
 }
 
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .hint-line, .marquee-track, .reveal.is-in, .nav, .btn-wa, .btn-maps, .sun, .mascot-float img {
+  .hint-line, .marquee-track, .reveal.is-in, .nav, .btn-wa, .btn-maps, .btn-cta, .btn-hero-alt, .sun, .mascot-float img, .stars, .shooting {
     animation: none !important;
     transition: none !important;
   }
+  .shooting { opacity: 0 !important; }
   .reveal.is-waiting { opacity: 1; transform: none; }
   .marquee-track {
     animation: none !important;
@@ -955,8 +1046,4 @@ body.is-night .section--night { color: var(--crema); }
     mask-image: none;
     -webkit-mask-image: none;
   }
-  .plataforma img { filter: grayscale(1) opacity(.75); }
-  .plataforma:hover img,
-  .plataforma:focus-visible img,
-  .plataforma.is-color img { filter: none; }
 }

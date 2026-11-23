@@ -19,7 +19,9 @@
   <div class="sky" aria-hidden="true">
     <div class="sky-grad"></div>
     <div class="sun" id="sun"></div>
-    <div class="stars" id="stars"></div>
+    <div class="stars stars-1"></div>
+    <div class="stars stars-2"></div>
+    <div class="shooting"></div>
   </div>
 
   <header class="nav" id="nav">
@@ -57,23 +59,23 @@
 
   <main id="contenido">
     <section id="inicio" class="hero">
-      <h1 class="sr-only">Distribuidora El Dorado — Venecia de San Carlos</h1>
-      <div class="hero-sticky">
-        <figure class="hero-store">
-          <picture>
-            <source srcset="assets/local-panorama.avif" type="image/avif" />
-            <source srcset="assets/local-panorama.webp" type="image/webp" />
-            <img src="assets/local-panorama.jpg" width="1600" height="720" alt="Fachada de Distribuidora El Dorado en Venecia de San Carlos" fetchpriority="high" decoding="async" />
-          </picture>
-        </figure>
-
-        <p class="hero-hint" data-hero="hint">
-          <span class="hint-line" aria-hidden="true"></span>
-          Baje y conozca todo lo que tenemos para usted.
-        </p>
-        <p class="story" data-hero="s1">Desde hace 20 años,<br />en el corazón de Venecia…</p>
-        <p class="story" data-hero="s2">…cuidamos a quienes<br />más quiere.</p>
-        <p class="story" data-hero="s3">Todo para su mascota, su hogar<br />y sus pagos, en un solo lugar.</p>
+      <!-- Portada: foto provisional (los rótulos del local cambiaron).
+           Para actualizarla, reemplace el trío assets/portada.{avif,webp,jpg}. -->
+      <div class="hero-bg">
+        <picture>
+          <source srcset="assets/portada.avif" type="image/avif" />
+          <source srcset="assets/portada.webp" type="image/webp" />
+          <img src="assets/portada.jpg" width="1600" height="1200" alt="Fachada de Distribuidora El Dorado en Venecia de San Carlos" fetchpriority="high" decoding="async" />
+        </picture>
+      </div>
+      <div class="hero-copy">
+        <h1>Todo para su mascota y sus pagos, en el corazón de <span class="accent">Venecia</span>.</h1>
+        <p class="hero-lead">Alimento, accesorios y los pagos del día a día, en un solo mostrador. Llevamos veinte años en Venecia de San Carlos; pase o escríbanos, con gusto le atendemos.</p>
+        <div class="hero-actions">
+          <a class="btn-wa" href="https://wa.me/50685660110" target="_blank" rel="noopener">Consultar por WhatsApp</a>
+          <!-- TODO: cuando exista la página de catálogo, cambiar este href. -->
+          <a class="btn-hero-alt" href="#que-hacemos">Ver Catálogo</a>
+        </div>
       </div>
     </section>
 
@@ -276,6 +278,14 @@
       </div>
     </section>
 
+
+    <section class="cta-wrap" aria-label="Consulta de pagos por SINPE Móvil">
+      <div class="cta-bar">
+        <p class="cta-text">¿Quiere consultar sus servicios y pagar por SINPE Móvil?</p>
+        <a class="btn-cta" href="https://wa.me/50685660110" target="_blank" rel="noopener">Escríbanos por WhatsApp</a>
+      </div>
+    </section>
+
     <section id="preguntas" class="section section--dusk">
       <div class="section-head">
         <p class="eyebrow">Preguntas</p>
@@ -417,5 +427,6 @@
   </footer>
 
   <script src="script.js"></script>
+  <script src="cielo.js"></script>
 </body>
 </html>
