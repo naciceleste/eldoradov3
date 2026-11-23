@@ -172,7 +172,6 @@
       soundBtn.setAttribute("aria-pressed", "false");
       soundBtn.textContent = "Activar sonido";
     }
-    if (typeof reconcileClips === "function") reconcileClips();
   };
 
   let ticking = false;
@@ -261,87 +260,6 @@
       });
     });
   });
-
-  /* ---- clips de animales: lazy-load, máx. 2 en reproducción, poster en Safari / reduced-motion ---- */
-  const MAX_PLAYING = 2;
-  const videos = $$(".floater-video");
-  const canVp9Alpha = (() => {
-    if (reduce) return false;
-    const probe = document.createElement("video");
-    const playsVp9 = !!(probe.canPlayType('video/webm; codecs="vp9"') || probe.canPlayType('video/webm; codecs="vp9.0"'));
-    if (!playsVp9) return false;
-    const ua = navigator.userAgent;
-    const isiOS = /iP(hone|ad|od)/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
-    const isSafari = /Safari/i.test(ua) && !/Chrome|Chromium|CriOS|FxiOS|Edg\/|EdgiOS|Android/.test(ua);
-    return !(isiOS || isSafari);
-  })();
-  document.documentElement.classList.toggle("no-vp9-alpha", !canVp9Alpha);
-
-  const ratios = new Map();
-  const playable = canVp9Alpha && videos.length > 0;
-
-  const mediaOf = (video) => video.closest(".floater-media") || video;
-  const videoOf = (el) => (el.matches && el.matches("video") ? el : el.querySelector(".floater-video"));
-
-  const wantPlay = (video, night) => {
-    if (!playable) return false;
-    const fig = video.closest(".floater");
-    const isDay = fig && !fig.classList.contains("floater--night");
-    if (isDay && night > 0.72) return false;
-    const r = ratios.get(video) || 0;
-    const rect = mediaOf(video).getBoundingClientRect();
-    const vh = window.innerHeight || 1;
-    const visible = rect.bottom > 40 && rect.top < vh - 40;
-    return visible && r >= 0.15;
-  };
-
-  const loadSrc = (video) => {
-    if (video.dataset.loaded || !video.dataset.src) return;
-    video.src = video.dataset.src;
-    video.dataset.loaded = "1";
-    video.hidden = false;
-    video.load();
-  };
-
-  const reconcileClips = () => {
-    if (!playable) return;
-    const night = parseFloat(getComputedStyle(root).getPropertyValue("--night")) || 0;
-    const ranked = videos
-      .map((v) => ({
-        v,
-        want: wantPlay(v, night),
-        ratio: ratios.get(v) || 0,
-        priority: Number(v.dataset.priority || 9),
-      }))
-      .filter((x) => x.want)
-      .sort((a, b) => b.ratio - a.ratio || a.priority - b.priority);
-    const winners = new Set(ranked.slice(0, MAX_PLAYING).map((x) => x.v));
-    videos.forEach((v) => {
-      if (winners.has(v)) {
-        loadSrc(v);
-        const tryPlay = () => { v.play().catch(() => {}); };
-        if (v.readyState >= 2) tryPlay();
-        else v.addEventListener("loadeddata", tryPlay, { once: true });
-      } else if (!v.paused) {
-        v.pause();
-      }
-    });
-  };
-
-  if (playable) {
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach((e) => {
-        const v = videoOf(e.target);
-        if (!v) return;
-        ratios.set(v, e.intersectionRatio);
-        if (e.isIntersecting) loadSrc(v);
-      });
-      reconcileClips();
-    }, { threshold: [0, 0.15, 0.25, 0.4, 0.6, 0.8, 1], rootMargin: "160px 0px" });
-    videos.forEach((v) => io.observe(mediaOf(v)));
-  } else {
-    videos.forEach((v) => { v.hidden = true; });
-  }
 
   /* year-less footer already static */
   onScroll();
