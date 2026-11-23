@@ -7,8 +7,6 @@
   const nav = $("#nav");
   const burger = $("#nav-burger");
   const links = $("#nav-links");
-  const soundBtn = $("#sound-toggle");
-  const soundWrap = document.querySelector(".sound-wrap");
   const form = $("#contact-form");
   const formError = $("#form-error");
   const hero = $("#inicio");
@@ -53,14 +51,6 @@
   });
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") closeMenu();
-  });
-
-  /* ---- sonido (el canto de pajaritos sigue siendo provisorio) ---- */
-  let soundOn = false;
-  soundBtn?.addEventListener("click", () => {
-    soundOn = !soundOn;
-    soundBtn.setAttribute("aria-pressed", String(soundOn));
-    soundBtn.textContent = soundOn ? "Silenciar" : "Activar sonido";
   });
 
   /* ---- hero frases ---- */
@@ -163,15 +153,6 @@
     nav.classList.toggle("is-night", night >= 0.72);
     body.classList.toggle("is-night", night >= 0.72);
     if (theme) theme.setAttribute("content", sky.top);
-
-    if (soundWrap) {
-      soundWrap.classList.toggle("is-away", s > m.heroEnd - m.vh * 0.08 || night > 0.7);
-    }
-    if (soundOn && night > 0.7) {
-      soundOn = false;
-      soundBtn.setAttribute("aria-pressed", "false");
-      soundBtn.textContent = "Activar sonido";
-    }
   };
 
   let ticking = false;
