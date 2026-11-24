@@ -79,10 +79,10 @@
 .product-card[hidden] { display: none; }
 .product-photo {
   background: #fff;
-  aspect-ratio: 1 / 1.1;
+  aspect-ratio: 1 / 1;
   display: grid;
   place-items: center;
-  padding: 14px 16px 8px;
+  padding: 0;
 }
 .product-photo img {
   width: 100%;
