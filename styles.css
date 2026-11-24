@@ -346,7 +346,7 @@ body.is-night .step { color: var(--navy); }
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 52%;
+  object-position: 52% 40%;
 }
 .hero-bg::after {
   content: "";
