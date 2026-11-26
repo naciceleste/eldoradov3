@@ -609,6 +609,56 @@ body.is-night .step { color: var(--navy); }
 }
 
 
+
+/* -------- Hover de títulos de sección --------
+   El h2 «Preguntas frecuentes» va sobre el cielo nocturno: #F69B21
+   cumple AA (8.62:1 en --sky-top, 7.29:1 en --sky-bot).
+   Los eyebrows son pastillas crema: #F69B21 como texto solo da 1.91:1,
+   y un naranja más oscuro (#9E5B00, 4.66:1) se leía marrón y flojo.
+   En esas pastillas, el fondo pasa a #F69B21 y el texto se queda navy
+   (6.85:1, el mismo criterio de las tarjetas). */
+#que-hacemos .eyebrow,
+#como-funciona .eyebrow,
+#preguntas .eyebrow {
+  transition: color 250ms ease, background-color 250ms ease;
+}
+#preguntas .section-head h2 {
+  transition: color 250ms ease;
+}
+
+@media (hover: hover) {
+  #que-hacemos .eyebrow:hover,
+  #como-funciona .eyebrow:hover,
+  #preguntas .eyebrow:hover {
+    background-color: var(--naranja);
+    color: var(--navy);
+  }
+  #preguntas .section-head h2:hover {
+    color: var(--naranja);
+  }
+}
+
+@media (hover: none) {
+  #que-hacemos .eyebrow:active,
+  #como-funciona .eyebrow:active,
+  #preguntas .eyebrow:active {
+    background-color: var(--naranja);
+    color: var(--navy);
+  }
+  #preguntas .section-head h2:active {
+    color: var(--naranja);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #que-hacemos .eyebrow,
+  #como-funciona .eyebrow,
+  #preguntas .eyebrow,
+  #preguntas .section-head h2 {
+    transition: none;
+  }
+}
+
 /* -------- Logos (fondo blanco, colores oficiales) -------- */
 .section--logos {
   padding-top: 80px;
